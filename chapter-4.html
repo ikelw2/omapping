@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="color-scheme" content="light dark">
+	<meta name="keywords" content="orienteering, mapping, mapper, lidar">
+	<meta name="author" content="Michael W">
+	<meta name="description" content="How to prepare an orienteering map and course files for an event.">
+	<title>Chapter 4: Prepare for an Event | Orienteering Map Guide</title>
+	<link rel="icon" type="image/png" href="https://www.landnavapp.com/docs/Images/icon_blank.png">
+	<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+	<header>
+		<div class="center">
+			<p class="site-title"><a href="index.html#TOC0">How To Create An Orienteering Map</a></p>
+			<p><time datetime="2025-05-03">Updated 2025-05-03</time></p>
+			<p><i>This page is undergoing construction, please load in desktop mode if you encounter difficulties on a mobile device.</i></p>
+		</div>
+		<div>
+			<fieldset class="settings">
+				<legend>Font-size & Dark-mode:</legend>
+				<div id="firstline"></div>
+				<div id="textZoom" class="slider">
+					<label for="font-size-slider">Font size</label>
+					<input type="range" min="4" max="40" value="12" id="font-size-slider" step="1">
+					<button id="darkModeButton" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">&#9680;</button>
+				</div>
+			</fieldset>
+			<p><b>Google Translate:</b></p>
+			<div id="google_translate_element"></div>
+			<img src="img1/flags.png" alt="">
+		</div>
+	</header>
+	<main>
+	<section id="L4">
+	<header class="section-heading"><h1>4. Prepare for an Event</h1><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>In this fourth part (STILL UNDER CONSTRUCTION), we will create a new copy of the map specifically for an event, rotate the map for magnetic declination, crop unused areas, add magnetic lines and scale, determine where to place the course, and create course files using a program like purple pen.</p>
+	</section>
+		<nav class="chapter-navigation" aria-label="Chapter navigation"><a href="chapter-3.html">Previous chapter</a>
+			<a href="index.html#TOC0">Master table of contents</a></nav>
+		<nav class="chapter-contents" aria-labelledby="chapter-contents-title">
+			<h2 id="chapter-contents-title">Chapter contents</h2>
+			<ul>
+			<li><a href="#L41">4.1 Prepare Event Copy</a></li>
+			<li><a href="#L42">4.2 Crop Unused Portions</a></li>
+			<li><a href="#L43">4.3 Design Courses</a></li>
+			<li><a href="#L44">4.4 Import into Purple Pen</a></li>
+			<li><a href="#L45">4.5 Other Tips</a></li>
+			</ul>
+		</nav>
+
+
+	<section id="L41">
+	<header class="section-heading"><h3>4.1 Prepare Event Copy</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<ol>
+	<li>Copy map and rename event_map, so we know we are only making edits for the purpose of printing and running an event.</li>
+	<li>Rotate the map to match the current magnetic declination of the area. (you may need to look up the declination on another website). If you go to "Map --&gt; Georeferencing" there may already be a minor rotation applied to your map. Ordinarily to rotate the map, use "Map --&gt; Rotate Map". Both methods can be used to apply a rotation to your map, I believe.	<p>NOTE: The reason why we only rotate the map when we are about to export a map for an event, is because rotating the map is hard to undo and it may pose problems if we try to make drastic changes to our map later on, such as expanding the map in a particular direction. When we go to import the OSM or LIDAR data, the newly imported data has not yet been rotated, so we'll have to rotate it once in an intermediate file before we import it - it is possibly much more complex to save a map that's been rotated, so we will only rotate our map right before we intend to use it for an event, and maintain an un-rotated map as our main map to edit.</p></li>
+	<li>add magnetic lines to the map by adding large square area (symbol 601.2 or 601.4).</li>
+	<li>add scale object, north arrow(s), and other markings as necessary.	<p>NOTE: For Scale and other markings like magnetic north arrow symbol(s), you may need to create your own, using symbols for buildings and roads, and numbers. In the below example, I use a combination of Gigantic Boulder (symbol 206.1) for the areas, and Passable rock face, top line (symbol 202.4) for the borders of the scale, and Impassable cliff tag line (symbol 201.4) for the border, and Uncrossable body of water, fill (symbol 301.1) to fill the north arrows. You may use whatever symbol combination works best for you.</p>
+	<p><img src="img12/scale_arrows.png" width="400" height="auto" alt=""></p>	</li>
+	</ol></section>
+
+
+	<section id="L42">
+	<header class="section-heading"><h3>4.2 Crop Unused Portions</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>Make a final decision about what areas to crop in order to fit your map on a particular size of paper. In order to complete this step, you may want to design courses (next step) first.</p>
+	</section>
+
+
+	<section id="L43">
+	<header class="section-heading"><h3>4.3 Design Courses</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>Determine where you want your courses to be. Consider having different courses approach the same controls from different angles, and minimize sharp dog legs (where traffic only approaches/departs a control in one direction).</p>
+	<p>Inevitably, before holding an event, you will want to field check each and every individual control in the field, to make sure it is an acceptable control for the type of course you are running. It is absolutely necessary to conduct another field check, and confirm that the point is on the correct symbol, and that there is not an error in mapping. It is best to do this at least once, with others present, so there are multiple checks for this control.</p>
+	<p>When field checking, it may be useful to mark the location with some tape, so the exact point can be used if/when actual control flags are placed for an event.</p>
+	</section>
+
+
+	<section id="L44">
+	<header class="section-heading"><h3>4.4 Import into Purple Pen</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<ol>
+	<li>Create a new folder inside your park folder and call it "event_" and the date of the event i.e., "event_20250323".</li>
+	<li>In OpenOrienteering Mapper, save an image file of the map to the event folder. It can be PNG or JPG, however the best resolution is 300 pixels per inch, for best readability. 150 may do the trick as well.	<p>Create courses in Purple Pen or another editor.</p>
+	<p>Export files such as KML, PDF, OMAP, KMZ, etc, depending on need. If you use Maprun, you may want to export OMAP and KMZ files, but only one KMZ file will work fine (without controls on it). This part needs some editing because there are some details missing.</p></li>
+	<li>Update the climb variable by counting the number of uphill contours the direct course line passes through.</li>
+	<li>Consolidate the event files in the event folder, and share them with your print shop.</li>
+	</ol></section>
+
+
+
+	<section id="L45">
+	<header class="section-heading"><h3>4.5 Other Tips</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>A few other random tips:</p>
+	<ul>
+	<li>Before engaging in some major task, write it down on a task list, and try to only do the top-priority tasks first. Do not waste your time making tens or hundreds of subtle changes, if those changes are insignificant at zoom level 1. (See <a href="chapter-3.html#wasted">this example</a> for more details).</li>
+	<li>Understand the two different ways to load data into OpenOrienteering mapper, and ask questions of other mappers before beginning some crazy time-consuming task. The first time I used LIDAR data with OpenOrienteering mapper, I didn't realize I could edit the contours, because I had incorrectly loaded them in template/image version. I spent a lot of time uselessly copying pre-existing contours from template form to object form. Once I learned I could just import the shape file, I was annoyed I had wasted that time.</li>
+	</ul></section>
+		<nav class="chapter-navigation" aria-label="Chapter navigation"><a href="chapter-3.html">Previous chapter</a>
+			<a href="index.html#TOC0">Master table of contents</a></nav>
+	</main>
+<script src="site.js"></script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>

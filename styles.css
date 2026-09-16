@@ -1,0 +1,166 @@
+:root {
+	--backgroundcolor: rgb(229, 242, 229);
+	--textcolor: black;
+	--linkcolor: black;
+	--precolor: white;
+	font-family: Arial, sans-serif;
+	margin: 50px 5% 30px;
+}
+
+.night {
+	--backgroundcolor: black;
+	--textcolor: white;
+	--linkcolor: white;
+	--precolor: gray;
+}
+
+.center {
+	text-align: center;
+}
+
+h2 {
+	margin-top: 6em;
+	margin-bottom: 2em;
+}
+
+.rfBtn {
+	float: right;
+	white-space: nowrap;
+}
+
+.section-heading {
+	margin-top: 6em;
+	margin-bottom: 2em;
+}
+
+.section-heading::after {
+	clear: both;
+	content: "";
+	display: table;
+}
+
+.section-heading h2,
+.section-heading h1,
+.section-heading h3 {
+	display: inline;
+	margin: 0;
+}
+
+.site-title {
+	font-size: 2em;
+	font-weight: bold;
+	margin-block: 0.67em;
+}
+
+.chapter-navigation {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem 1.5rem;
+	justify-content: space-between;
+	margin-block: 2rem;
+}
+
+.chapter-contents {
+	border: 1px solid #aaa;
+	margin-block: 2rem;
+	max-width: 40rem;
+	padding: 1rem 1.5rem;
+}
+
+.chapter-contents h2 {
+	margin: 0 0 1rem;
+}
+
+img {
+	height: auto;
+	max-width: 100%;
+}
+
+.settings {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.settings legend {
+	font-weight: bold;
+}
+
+pre {
+	background: var(--precolor);
+	color: var(--textcolor);
+	font-family: courier, "courier new", serif;
+	font-size: 95%;
+	font-weight: bold;
+	margin-left: 10px;
+	padding: 15px;
+	tab-size: 2;
+	width: min-content;
+}
+
+body {
+	background-color: var(--backgroundcolor);
+	color: var(--textcolor, black);
+}
+
+.dark-mode {
+	background-color: #121212;
+	filter: brightness(80%) grayscale(30%);
+}
+
+a:link,
+a:visited {
+	color: var(--textcolor);
+}
+
+a:hover {
+	color: red;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+	outline: 3px solid currentColor;
+	outline-offset: 3px;
+}
+
+#toc_container {
+	border: 1px solid #aaa;
+	display: table;
+	font-size: 95%;
+	margin-bottom: 1em;
+	padding: 20px;
+	width: auto;
+}
+
+.toc_title {
+	font-weight: 700;
+	text-align: center;
+}
+
+#toc_container li,
+#toc_container ul,
+#toc_container ul li {
+	list-style: outside none none !important;
+	padding: 2px 10px !important;
+}
+
+@media (max-width: 40rem) {
+	:root {
+		margin: 24px 4% 20px;
+	}
+
+	pre {
+		box-sizing: border-box;
+		margin-left: 0;
+		max-width: 100%;
+		overflow-x: auto;
+	}
+
+	#toc_container {
+		box-sizing: border-box;
+		display: block;
+		padding: 12px;
+		width: 100%;
+	}
+}

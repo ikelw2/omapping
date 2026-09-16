@@ -1,14 +1,22 @@
-<P>
-The purpose of this repository is to enable anyone with access to LIDAR data to be able to make orienteering maps using free open source software.  For more information about the sport of orienteering, visit https://landnavapp.com/orienteering.html
-</P>
+# Orienteering Mapping Guide
 
-<p>
-The instruction uses https://www.openorienteering.org/apps/mapper/ for creating orienteering maps, and https://sourceforge.net/projects/saga-gis/ for processing LIDAR and GIS data.
-</p>
+This repository helps people with access to LIDAR data create orienteering maps using free, open-source software. For more information about orienteering, visit https://landnavapp.com/orienteering.html.
 
-<p>
-This repository contains an HTML instruction page.  It can be accessed online at https://ikelw2.github.io/omapping/
-</p>
-<p>
-  Alternatively, copy all the files to your computer in order to view.  Please help improve this repository by raising issues, or contact me with questions.
-</p>
+The guide uses OpenOrienteering Mapper to create maps and SAGA GIS to process LIDAR and GIS data:
+
+- https://www.openorienteering.org/apps/mapper/
+- https://sourceforge.net/projects/saga-gis/
+
+Read the guide online at https://ikelw2.github.io/omapping/ or download the repository and open `index.html` locally.
+
+## Site Structure
+
+- `index.html`: master table of contents
+- `chapter-1.html`: acknowledgment, overview, and requirements
+- `chapter-2.html`: downloading and processing data
+- `chapter-3.html`: compiling and editing the map
+- `chapter-4.html`: preparing a map for an event
+- `styles.css`: shared presentation and responsive styles
+- `site.js`: shared controls and legacy fragment redirects
+
+Existing bookmarks such as `index.html#L24` redirect to the corresponding chapter page. Please raise an issue or contact the author with questions or corrections.

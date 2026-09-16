@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="color-scheme" content="light dark">
+	<meta name="keywords" content="orienteering, mapping, mapper, lidar">
+	<meta name="author" content="Michael W">
+	<meta name="description" content="Acknowledgment, overview, and software requirements for creating an orienteering map from LIDAR data.">
+	<title>Chapter 1: Acknowledgment & Overview | Orienteering Map Guide</title>
+	<link rel="icon" type="image/png" href="https://www.landnavapp.com/docs/Images/icon_blank.png">
+	<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+	<header>
+		<div class="center">
+			<p class="site-title"><a href="index.html#TOC0">How To Create An Orienteering Map</a></p>
+			<p><time datetime="2025-05-03">Updated 2025-05-03</time></p>
+			<p><i>This page is undergoing construction, please load in desktop mode if you encounter difficulties on a mobile device.</i></p>
+		</div>
+		<div>
+			<fieldset class="settings">
+				<legend>Font-size & Dark-mode:</legend>
+				<div id="firstline"></div>
+				<div id="textZoom" class="slider">
+					<label for="font-size-slider">Font size</label>
+					<input type="range" min="4" max="40" value="12" id="font-size-slider" step="1">
+					<button id="darkModeButton" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">&#9680;</button>
+				</div>
+			</fieldset>
+			<p><b>Google Translate:</b></p>
+			<div id="google_translate_element"></div>
+			<img src="img1/flags.png" alt="">
+		</div>
+	</header>
+	<main>
+	<section id="L1">
+	<header class="section-heading"><h1>1. Acknowledgment & Overview</h1><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>Acknowledgment: <b>Almost all of section 2 of this guide is taken from a PDF file "Creating Base Map Templates in OOM from LiDAR and other Sources" (<a href="https://www.britishorienteering.org.uk/document/e7823ecc894e5b1a55b716b381d35b12.pdf/Creating%20Base%20Map%20Templates%20in%20OOM%20from%20LiDAR%20and%20other%20Sources.v2.pdf" target="_blank" rel="noopener noreferrer">link</a>) from the British Orienteering webpage</b> (all I changed was the sequence of some steps). They also have some interesting <a href="https://www.britishorienteering.org.uk/webinars" target="_blank" rel="noopener noreferrer">webinars</a> posted complete with lesson materials.</p>
+	<p>Brief Overview: Determine your park boundaries, download applicable data and process it, then create and update a map using OpenOrienteering mapper. When the time comes and you want to run an event, you'll need to make some final adjustments and crop your map, and you may use another program to do this and to produce the course files.</p>
+	<p>Disclaimer: Some of the things that worked for me, may not apply to your map. I take responsibility for any errors in this document.</p>
+	<p>Requirements: This tutorial uses the following programs:</p>
+	<ul>
+		<li><b>SAGA GIS</b>
+			<ul>
+				<li><a href="https://saga-gis.sourceforge.io/en/index.html" target="_blank" rel="noopener noreferrer">Project</a></li>
+				<li><a href="https://sourceforge.net/projects/saga-gis/files/" target="_blank" rel="noopener noreferrer">Download</a></li>
+				<li><a href="https://sourceforge.net/p/saga-gis/wiki/Documentation/" target="_blank" rel="noopener noreferrer">Documentation</a></li>
+				<li><a href="https://github.com/saga-gis" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+			</ul></li>
+		<li><b>OpenOrienteering Mapper</b>
+			<ul>
+				<li><a href="https://www.openorienteering.org/apps/mapper/" target="_blank" rel="noopener noreferrer">Project&Download</a></li>
+				<li><a href="https://www.openorienteering.org/mapper-manual/pages/" target="_blank" rel="noopener noreferrer">Documentation</a></li>
+				<li><a href="https://github.com/OpenOrienteering/mapper" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+			</ul></li>
+		<li><b>PurplePen</b>
+			<ul>
+				<li><a href="https://purple-pen.org/" target="_blank" rel="noopener noreferrer">Project&Download</a></li>
+				<li><a href="https://purple-pen.org/#learn" target="_blank" rel="noopener noreferrer">Documentation</a></li>
+				<li><a href="https://github.com/petergolde/PurplePen" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+			</ul></li>
+	</ul></section>
+		<nav class="chapter-navigation" aria-label="Chapter navigation"><a href="index.html#TOC0">Master table of contents</a>
+			<a href="chapter-2.html">Next chapter</a></nav>
+	</main>
+<script src="site.js"></script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>

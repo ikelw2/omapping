@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="color-scheme" content="light dark">
+	<meta name="keywords" content="orienteering, mapping, mapper, lidar">
+	<meta name="author" content="Michael W">
+	<meta name="description" content="How to download and process OSM, LIDAR, imagery, and contour data for an orienteering map.">
+	<title>Chapter 2: Download & Process Data | Orienteering Map Guide</title>
+	<link rel="icon" type="image/png" href="https://www.landnavapp.com/docs/Images/icon_blank.png">
+	<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+	<header>
+		<div class="center">
+			<p class="site-title"><a href="index.html#TOC0">How To Create An Orienteering Map</a></p>
+			<p><time datetime="2025-05-03">Updated 2025-05-03</time></p>
+			<p><i>This page is undergoing construction, please load in desktop mode if you encounter difficulties on a mobile device.</i></p>
+		</div>
+		<div>
+			<fieldset class="settings">
+				<legend>Font-size & Dark-mode:</legend>
+				<div id="firstline"></div>
+				<div id="textZoom" class="slider">
+					<label for="font-size-slider">Font size</label>
+					<input type="range" min="4" max="40" value="12" id="font-size-slider" step="1">
+					<button id="darkModeButton" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">&#9680;</button>
+				</div>
+			</fieldset>
+			<p><b>Google Translate:</b></p>
+			<div id="google_translate_element"></div>
+			<img src="img1/flags.png" alt="">
+		</div>
+	</header>
+	<main>
+	<section id="L2">
+	<header class="section-heading"><h1>2. Download & Process Data</h1><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>In this second section, we determine the north/south and east/west boundaries for your map, download data, and process it. In the next (third) section we will bring it into OpenOrienteering Mapper and make edits.</p>
+	<p>NOTE: In these instructions, the word 'mosaic', 'image' and 'template' is used interchangeably, for two reasons. Firstly, in SAGA we will create "mosaics" by joining LIDAR tiles together, then exporting them as single PNG image file. Secondly, in OpenOrienteering Mapper, when we want to load a file <b><i>as an uneditable image</i></b> we will load it as a "template".</p>
+	</section>
+		<nav class="chapter-navigation" aria-label="Chapter navigation"><a href="chapter-1.html">Previous chapter</a>
+			<a href="index.html#TOC0">Master table of contents</a>
+			<a href="chapter-3.html">Next chapter</a></nav>
+		<nav class="chapter-contents" aria-labelledby="chapter-contents-title">
+			<h2 id="chapter-contents-title">Chapter contents</h2>
+			<ul>
+			<li><a href="#L21">2.1 Download OSM data</a></li>
+			<li><a href="#L22">2.2 Download LIDAR data</a></li>
+			<li><a href="#L23">2.3 Open LIDAR in SAGA</a></li>
+			<li><a href="#L24">2.4 Altitude Elevation Mosaic</a></li>
+			<li><a href="#L25">2.5 Treetop Elevation Mosaic</a></li>
+			<li><a href="#L26">2.6 Vegetation Height Image</a></li>
+			<li><a href="#L27">2.7 Vegetation Slope Image</a></li>
+			<li><a href="#L28">2.8 Raw 0.5m Shapefile</a></li>
+			<li><a href="#L29">2.9 Smooth 2.5m Shapefile</a></li>
+			<li><a href="#L210">2.10 Blue&Black Slope Images</a></li>
+			<li><a href="#L211">2.11 Blue Hill-Shading Images</a></li>
+			<li><a href="#L212">2.12 Further SAGA Processing</a></li>
+			<li><a href="#L213">2.13 Orthophotography</a></li>
+			<li><a href="#L214">2.14 Micro-Contour Template</a></li>
+			</ul>
+		</nav>
+
+
+	<section id="L21">
+	<header class="section-heading"><h3>2.1 Download OSM data</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>We will begin by determining where our map will be, and downloading the OSM data.</p>
+	<p>It is simplest to determine the rough boundary of your map at the very beginning using OpenStreetMap because you can write down the left, right, top, and bottom boundaries. It makes downloading data much easier. Additionally, if you need to expand the map later on, you can simply export a new small area outlining only the new section you want to add, rather than having to download the entirety of the larger map.</p>
+	<p>NOTE: You will need to download OSM and LIDAR data for your map. The larger these data sets, the more processing power your computer will need, and the longer it will take to process (from minutes to hours). Therefore, it is recommended to select a <b>smaller</b> map range for your first map. If you want to expand the map later on, it can be done and is not too much trouble.</p>
+	<ol>
+	<li>Create a new folder on your computer and rename it the name of your map. For this example we'll call the folder "Park".</li>
+	<li>Open <a href="https://www.openstreetmap.org" target="_blank" rel="noopener noreferrer">https://www.openstreetmap.org</a>.</li>
+	<li>Zoom in on the area you want to map.</li>
+	<li>Click the "<mark>Export</mark>" tab at top.</li>
+	<li>Click the "<mark>Manually select a different area</mark>" link beneath the export coordinates.
+	<p><img src="img1/OSM_Adjust.jpg" width="700" height="auto" alt="OpenStreetMap export panel with the manual selection link and map boundary controls"></p></li>
+	<li>Adjust the rectangle so that it fits the area you want to map.</li>
+	<li>Create a new text file in the "Park" folder called "Notes.txt". Copy the top, bottom, left and right coordinates to the file, labeling it 'OSM range (degrees)'.
+	<pre>- OSM range (degrees): north 48.71413 to 48.73247, east 9.03283 to 9.06501</pre></li>
+	<li>Use the internet (i.e., <a href="https://www.latlong.net/lat-long-utm.html" target="_blank" rel="noopener noreferrer">https://www.latlong.net/lat-long-utm.html</a>) to convert the south west and north east points from decimal degrees to UTM.
+	<p><img src="img1/UTM_Conv.png" width="700" height="auto" alt="Latitude and longitude to UTM conversion form filled with example coordinates"></p></li>
+	<li>Type the converted UTM range into the "Notes.txt" file.
+	<pre>- OSM range (UTM): north 5395678 to 5397718, east 502415 to 504780</pre></li>
+	<li>Return to the OSM window, and click the blue "<mark>Export</mark>" button, and save the OSM file to the map folder, "Park".
+	<p><img src="img1/OSM_Export.jpg" width="700" height="auto" alt="OpenStreetMap export panel showing the Export button"></p>
+	<p>NOTE: If the OSM export area is too large or contains more than 50000 data points (frequently the case when trying to download urban areas), it will produce an error message <i>"You requested too many nodes (limit is 50000). Either request a smaller area, or use planet.osm"</i>. The best way to overcome this error message, is to export it in smaller chunks, then connect the parts later on. It helps to write down the coordinates of your intended download, because you'll have to reload the window and re-enter the dimensions to download more sections.</p>
+	<p>In the below example, we have arbitrarily divided the area into two sections, which we would download in two separate files. Just type the coordinates in the webpage and let it automatically adjust the box size - it is more accurate than using the mouse to adjust the box size.</p>
+	<pre>- OSM download 1 (degrees): north 48.71413 to <mark>48.72000</mark>, east 9.03283 to 9.06501<br>- OSM download 2 (degrees): north <mark>48.72000</mark> to 48.73247, east 9.03283 to 9.06501</pre></li>
+	<li>Reload the export tab if you need to download additional sections to your folder.</li>
+	<li>You should now have one or more *.OSM files along with the Notes.txt file in a folder on your computer, named after the name of your map or "Park" in our case.
+	<p><img src="img1/park_osm.png" width="300" height="auto" alt="Park folder containing an OSM file and Notes text file"></p></li>
+	</ol></section>
+
+
+	<section id="L22">
+	<header class="section-heading"><h3>2.2 Download LIDAR data</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>We will download two types of LIDAR data, in no particular order:</p>
+	<p>- <b>Digitales Oberflächenmodell (DOM)</b> / First Return / Treetop Elevation / Digital Surface Model (DSM)</p>
+	<p>- <b>Digitales Geländemodell (DGM)</b> / Last Return / Ground Elevation / Digital Terrain Model (DTM)</p>
+	<p>NOTE: Some LIDAR data is stored in a 'point cloud' format, usually LAZ, LAS, or XYZ files. Other data comes in GeoTIFF (TIF) format. We will use TIF format for the bulk of these instructions because the PDF file from British Orienteering uses that format, and Baden-Württemberg data is available in that format. If the below website doesn't work for your mapping needs, visit <a href="https://www.opendem.info/opendtm_de.html" target="_blank" rel="noopener noreferrer">https://www.opendem.info/opendtm_de.html</a> to see if there are other ways to access or process free data in your area.</p>
+	<ol>
+	<li>Create a sub-directory in the "Park" folder, and label it "<mark>geodata</mark>".</li>
+	<li>Open <a href="https://opengeodata.lgl-bw.de/#/" target="_blank" rel="noopener noreferrer">https://opengeodata.lgl-bw.de/#/</a> and click "<mark>zum Portal</mark>".</li>
+	<li>Zoom in on the area you want to map.</li>
+	<li>Scroll down and click on "<mark>Digitales Oberflächenmodell (DOM1)</mark>".
+	<p><img src="img1/Pick_DOM.jpg" width="700" height="auto" alt="Open GeoData Portal with Digitales Oberflächenmodell highlighted in the product list"></p></li>
+	<li><mark>Select which grids</mark> mark the area you intend to map.
+	<p><img src="img1/DOM.jpg" width="800" height="auto" alt="DOM1 download map with four selected grid squares and the download button highlighted"></p></li>
+	<li>Make a note of the filename numbers of the areas you selected. Each number represents the southwest coordinates of the area contained in each file. (The coordinates here are in UTM/meters not degrees.) The first three digits represents east/west km, and the last four digits represents north/south km. If you move the mouse over the map and look at the bottom-right of the window, it indicates the cursor location in UTM coordinates. By comparing the two, we can see that each box contains roughly four square kilometers of points (2km x 2km). For example, the file 501-5396 contains data from east 501000 to 502999, and from north 5396000 to 5397999.</li>
+	<li>Write down the filenames (four in our example) in the "Notes.txt" file.
+	<pre>- DOM files: 501-5396, 501-5394, 503-5394, 503-5396</pre></li>
+	<li><b>OPTIONAL</b>. Write down the overall range of the selected DOM data (which may be hard to do if your area is not rectangular shaped). Writing down the numbers is helpful to understand the size of the area we are downloading, and will help us to delete unnecessary files later.
+	<pre>- DOM range (UTM): north 5394000 to 5397999, east 501000 to 504999</pre></li>
+	<li>Click the "<mark>Herunterladen</mark>" button to download the files.</li>
+	<li>Move all these zip files from downloads to the "geodata" folder.</li>
+	<li>Right click on each zip file and select "<mark>Extract All</mark>" and extract them to that same "geodata" folder.</li>
+	<li>Delete the zip files.</li>
+	<li>Search for "<mark>*.tif</mark>" files in your geodata directory.</li>
+	<li>Select all the found TIF files and "<mark>move</mark>" them to the "geodata" folder.
+	<p>NOTE: Another way to go about this is to, one by one, open each decompressed folder, select all the TIF files, and cut and paste them to the "geodata" folder.</p>
+	<p><img src="img1/DOM_ZIP.png" width="500" height="auto" alt="Windows File Explorer with extracted TIF files selected and the Cut command highlighted"></p></li>
+	<li>Delete the remaining folders. All we want to keep are the TIF files.</li>
+	<li>In our example, we are left with 16 TIF files.
+	<p>NOTE: By examining the filenames, we can see that each of the four zip files we downloaded earlier contained four separate files, each containing one-square-kilometer of data.</p>
+	<p><img src="img1/DOM_TIF.png" width="500" height="auto" alt="Geodata folder containing the 16 extracted DOM TIF files"></p></li>
+	<li>Return to <a href="https://opengeodata.lgl-bw.de/#/" target="_blank" rel="noopener noreferrer">https://opengeodata.lgl-bw.de/#/</a>.</li>
+	<li>Zoom in on the same area we want to map.</li>
+	<li>Scroll down to and click on "<mark>Digitales Geländemodell (DGM025)</mark>".
+	<p>NOTE: I would have used the DGM1 data, except those files are in XYZ format, which I would have to convert to TIF later on in order to use them in conjunction with the DOM1 files to create the vegetation_height image. Let's use the DGM025 files which are in TIF format already!</p>
+	<p><img src="img1/Pick_DGM.jpg" width="700" height="auto" alt="Open GeoData Portal with Digitales Geländemodell DGM025 highlighted in the product list"></p></li>
+	<li>Follow the same steps above for the DGM025 data as we did earlier for the DOM1 data. Download and extract the files, and move the TIF files to the geodata folder, removing the leftover extracted folders and anything else inside them.</li>
+	<li>In the geodata folder of our example, we have now 32 LIDAR files (16 DOM1 and 16 DGM025 files).
+	<p><img src="img1/LIDAR_32.png" width="700" height="auto" alt="Geodata folder containing 32 DOM1 and DGM025 TIF files"></p></li>
+	<li><b>OPTIONAL</b>. To save processing time, we could compare the LIDAR files we've downloaded with the UTM range we wrote down earlier, and delete any files that are outside of that range. For example, we could delete the eight TIF files labeled 501-XXXX because our map only goes as west (low) as 502,415. Similarly, we could delete the eight TIF files labeled XXX-5394 because our map only goes as south (low) as 5395,678. Those together constitute 14 unnecessary files. If you are concerned about saving time and disk space, go ahead and delete any unnecessary files at this point, otherwise you can always crop your map later on. For the sake of demonstration, we will delete them.
+	<p><img src="img1/LIDAR_Cut.png" width="600" height="auto" alt="Geodata folder with 14 out-of-range LIDAR files selected for deletion"></p></li>
+	<li>For our demonstration, 18 LIDAR files (consuming 385MB disk size) now remain in our geodata folder.
+	<p><img src="img1/geodata_18.png" width="500" height="auto" alt="Geodata folder containing the 18 remaining LIDAR TIF files"></p></li>
+	</ol></section>
+
+
+	<section id="L23">
+	<header class="section-heading"><h3>2.3 Open LIDAR in SAGA</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>If you have not yet downloaded SAGA GIS, head to the link <a href="chapter-1.html#L1">above</a>, download it, and install it on your computer.</p>
+	<ol>
+	<li>Open the SAGA GUI program.</li>
+	<li>Click the <mark>Folder</mark> icon or click "File->Open" to load files.</li>
+	<li>Open the geodata folder and <mark>select all the LIDAR data</mark>.</li>
+	<li>Click "<mark>Open</mark>".	<p><img src="img2/SAGA_Load.png" width="700" height="auto" alt=""></p>
+	<p>NOTE: When using SAGA, on the far left is the "Manager" window. We can see the LIDAR files we just loaded in this window, and any other files we've created. Right of that is the "Object Properties" window, which we will use to adjust properties of selected files. If either window is closed, simply select the "Window" menu, and re-check the option you wish to see.</p>
+	<p><img src="img2/SAGA_Window.png" width="600" height="auto" alt="SAGA workspace with the Manager panel on the left and Object Properties panel on the right"></p>
+	<p>NOTE: By "Processing" the LIDAR data, we will essentially be creating several new images and shapefiles from the LIDAR data, which we will later import or load-as-template into OpenOrienteering mapper. Once we're done creating these files, we will delete the geodata folder along with all the original LIDAR data files. If you need to pause and resume these steps later on, click on the "disk" icon or select "File-->Project-->Save as" to save the SAGA GUI working environment.</p>
+	<p>NOTE: If you make a mistake when editing the 'Object Properties' window, you may attempt to 'undo' your mistakes by clicking the 'x' in the top right of the window. Unfortunately, the changes will stay - all you accomplish by clicking the 'x' is to close the window (click 'Window' menu option to open the windows again). I have not yet figured out how to undo some changes made to the 'Object Properties'. Your best bet may be to remove whichever file you were working on, and restart the process from an earlier step. If any steps are hard to understand or cause problems, please inform the author so improvements can be made.</p></li>
+	</ol></section>
+
+
+	<section id="L24">
+	<header class="section-heading"><h3>2.4 Altitude Elevation Mosaic</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>NOTE: Creating the Altitude and Treetop mosaic images essentially 'stitches' together several (smaller) LIDAR tiles into a single large tile (image). We then create several intermediate template image files from these two initial mosaics. Later on some of the processing (i.e., creating a contour shapefile) can take a very long time, and it may seem as if your computer has crashed, but let it keep running! If your computer seriously cannot handle processing the quantity of data for a large map, one alternative would be to create <i>smaller</i> mosaics, instead of a single large one (or even skip creating a mosaic in the first place, and use the individual tiles to create multiple altitude and treetop images). However, this strategy would require a lot more work because you would have to go through the rest of the instructions for each image file. It is recommended to go through these instructions with a smaller map first.</p>
+	<p>To create our first mosaic (image), we will use the <b>Digitales Geländemodell (DGM)</b> / Last Return / Ground Elevation / Digital Terrain Model (DTM) data.</p>
+	<ol>
+	<li>Click the <mark>gear</mark> button, also known as the "Run Tool".</li>
+	<li>In the "Search for" box type "<mark>mos</mark>" and press "Okay".	<p><img src="img2/SAGA_Mos.png" width="600" height="auto" alt=""></p></li>
+	<li>Ensure "<mark>Mosaicking</mark>" is selected, and press "OK".	<p><img src="img2/SAGA_Mos_2.png" width="300" height="auto" alt=""></p></li>
+	<li>In the Mosaicking window, click the "<mark>...</mark>" button to open the 'Grids' selection window.</li>
+	<li>Select all the <mark>DGM025</mark> files, then click the single "<mark>></mark>" button to move only those files to the right.</li>
+	<li>Click "<mark>Okay</mark>".	<p><img src="img2/MOS_Add_Grids.png" width="600" height="auto" alt=""></p></li>
+	<li>Change <b>Cellsize</b> from 0.25 to <mark>1</mark>.</li>
+	<li>Change <b>Fit</b> from Nodes to "<mark>cells</mark>".	<p><img src="img2/MOS_Finish.png" width="500" height="auto" alt=""></p></li>
+	<li>Examine the quantity of columns and rows. In this example we see <mark>3001</mark>. These numbers will have to <b>exactly match</b> the dimensions when we create the Treetop Elevation Mosaic in the next step.</li>
+	<li>Write the dimensions in the Notes.txt file.	<pre>- DGM Mosaic: columns 3001, rows 3001 </pre></li>
+	<li>Click "<mark>Okay</mark>". Wait for the process to complete.</li>
+	<li>Single-click the new "Mosaic" file at the bottom of the left-hand Manager window.	<p><img src="img2/select_MOS.png" width="300" height="auto" alt=""></p></li>
+	<li>In the Object Properties window, change the <b>Name</b> to "<mark>Altitude</mark>".</li>
+	<li>Press Enter twice to '<mark>apply</mark>' the change.</li>
+	<li id="L24_2">Scroll to the bottom of the Object Properties window, at <mark>Colors</mark> and select the "<mark>...</mark>" button.	<p><img src="img2/Mos_color.png" width="300" height="auto" alt=""></p></li>
+	<li>Click the color button and change it to the 11th option up from the bottom (<mark>green-yellow-brown</mark>).</li>
+	<li>Click "<mark>Count</mark>" button, and change it to <mark>15</mark>.</li>
+	<li>Click "<mark>Okay</mark>" to close the Colors window.	<p><img src="img2/Mos_color_2.png" width="500" height="auto" alt=""></p></li>
+	<li>In the Object Properties window, click "<mark>Apply</mark>" to apply changes.	<p>NOTE: Although we could press the 'Save' button, all it would do is offer to save the current configuration into an external file for reloading. We will use a different function 'Save as Image' to export an image file for our map.</p></li>
+	<li>In the Manager window, right-click the "<b>Altitude</b>" file and select "<mark>Save as Image</mark>".</li>
+	<li>Label the image "<mark>Altitude</mark>".</li>
+	<li>Select your "Park" folder (not the geodata folder), and click "<mark>Save</mark>".	<p><img src="img2/Mos_Image.png" width="500" height="auto" alt=""></p></li>
+	<li>Ensure "<mark>Save Georeference</mark>" is checked. "Legend" can remain un-checked.</li>
+	<li>Click "<mark>Okay</mark>".	<p><img src="img2/Mos_Image_2.png" width="400" height="auto" alt=""></p></li>
+	<li>You should now have an Altitude image (PNG) and world file (PGW) in your Park folder.	<p><img src="img2/after_Altitude.png" width="400" height="auto" alt="Park folder containing Altitude.png and its Altitude.pgw world file"></p></li>
+	</ol></section>
+
+	<section id="L25">
+	<header class="section-heading"><h3>2.5 Treetop Elevation Mosaic</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>For our second mosaic (image), we will use the <b>Digitales Oberflächenmodell (DOM)</b> / First Return / Treetop Elevation / Digital Surface Model (DSM) data.</p>
+	<ol>
+	<li>Click the <mark>gear</mark> button.</li>
+	<li>In the "Search for" box type "<mark>mos</mark>" and press "Okay".	<p><img src="img2/SAGA_Mos.png" width="600" height="auto" alt=""></p></li>
+	<li>Ensure "<mark>Mosaicking</mark>" is selected, and press "OK".	<p><img src="img2/SAGA_Mos_2.png" width="300" height="auto" alt=""></p></li>
+	<li>In the Mosaicking window, click the "<mark>...</mark>" button to open the 'Grids' selection window.</li>
+	<li>Click the double "<mark>&lt;&lt;</mark>" button to move all the files to the left-hand side.</li>
+	<li>Select all the <mark>DOM1</mark> files this time, then click the single "<mark>></mark>" button to move only those files to the right.</li>
+	<li>Click "<mark>Okay</mark>".	<p><img src="img2/MOS_Add_Grids_DOM.png" width="600" height="auto" alt=""></p></li>
+	<li>Set <b>Cellsize</b> to <mark>1</mark>.</li>
+	<li>Set <b>Fit</b> to "<mark>cells</mark>".	<p><img src="img2/MOS_Finish.png" width="500" height="auto" alt=""></p></li>
+	<li>Compare the quantity of columns and rows with the previous DGM mosaic (Altitude) we entered in our notes. Mine first showed 3000 but I was able to get it to show 3001 by switching <b>Fit</b> to "nodes" and back to "cells" again. If that does not work for you, go ahead and edit the numbers. Alternatively, you could change the <b>Target Grid System</b> to "<b>grid or grid system</b>", then select the "<b>Altitude</b>" option. However you do it, the dimensions will have to be the same as Altitude, for a later step. In our example, we need the dimensions to be 3001 x 3001.	<p>NOTE: Do not press the 'default' button, because it will clear the north, south, east and west values. To reload the ones that were there before, you may have to load the Mosaicking function again, switch up the source elements, or restart the instructions from an earlier step.</p></li>
+	<li>Click "<mark>Okay</mark>". Wait for the process to complete.	<p>NOTE: Both Altitude and Mosaic <b><i>must</i></b> be under the same line listing the dimensions. If both mosaics are not under the same dimensions, delete/close one or both Mosaic files, and redo previous steps until you are able to get their dimensions to match.</p>
+	<p><img src="img2/Select_MOS_1.png" width="300" height="auto" alt=""></p></li>
+	<li>Click the new "<b>Mosaic</b>" file.</li>
+	<li>In the Object Properties window, change the <b>Name</b> to "<mark>Treetops</mark>".</li>
+	<li>Press Enter twice to '<mark>apply</mark>' the change.</li>
+	<li>Scroll to the bottom of the Object Properties window, at <mark>Colors</mark> and select the "<mark>...</mark>" button.	<p><img src="img2/Mos_color.png" width="300" height="auto" alt=""></p></li>
+	<li>Click the <b>color button</b> and change it to the 11th option up from the bottom (<mark>green-yellow-brown</mark>).</li>
+	<li>Click "<mark>Count</mark>" button, and change it to <mark>15</mark>.</li>
+	<li>Click "<mark>Okay</mark>" to close the Colors window.	<p><img src="img2/Mos_color_2.png" width="500" height="auto" alt=""></p></li>
+	<li>In the Object Properties window, click "<mark>Apply</mark>" to apply changes.	<p>NOTE: Although we could press the 'Save' button, all it would do is offer to save the current configuration into an external file for reloading. We will use a different function 'Save as Image' to export an image file for our map.</p></li>
+	<li>In the Manager window, right-click the "<b>Treetops</b>" file and select "<mark>Save as Image</mark>".</li>
+	<li>Label the image "<mark>Treetops</mark>".</li>
+	<li>Select the base directory of your map (Park folder), and click "<mark>Save</mark>".</li>
+	<li>Check the "<mark>Save Georeference</mark>" box. "Legend" can remain un-checked.</li>
+	<li>Click "<mark>Okay</mark>".	<p><img src="img2/Mos_Image_2.png" width="400" height="auto" alt=""></p></li>
+	<li>You should now have Altitude and Treetops images (PNG) and world files (PGW) in your Park folder.	<p><img src="img2/after_Treetops.png" width="400" height="auto" alt="Park folder containing the Altitude and Treetops PNG and PGW files"></p></li>
+	</ol></section>
+
+	<section id="L26">
+	<header class="section-heading"><h3>2.6 Vegetation Height Image</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>We will use the difference between the other two mosaics to create a third image.</p>
+	<ol>
+	<li>Examine the bottom of the Manager window (on the left hand side of the SAGA GUI window). We should see both mosaics underneath the same dimensions grid, in our example they are both underneath "1; 3001x3001y; 502000x 5395000y". Because they are both underneath that line, we are good to proceed. If the two mosaics appear under different dimension lines, we will need to re-create one or both mosaics, so that both appear under the same size dimensions.	<p><img src="img3/SAGA_both_mos.png" width="400" height="auto" alt=""></p></li>
+	<li>Click the <mark>gear</mark> button.</li>
+	<li>In the "Search for" box type "<mark>dif</mark>" and press "Okay".</li>
+	<li>Select "<mark>Grid Difference</mark>", and press "OK".	<p><img src="img3/SAGA_Dif_2.png" width="500" height="auto" alt=""></p></li>
+	<li>In the Grid Difference window, in "<b>Grid System</b>" select the <mark>dimensions</mark> which both mosaics are under. In our example, we've selected "1; 3001x3001y; 502000x 5395000y".</li>
+	<li>Under "<b>&gt; &gt; Minuend</b>", select "<mark>Altitude</mark>".</li>
+	<li>Under "<b>> Subtrahend</b>", select "<mark>Treetops</mark>".</li>
+	<li>Under "<b>&lt; &lt; Difference</b>", select "<mark>create</mark>".	<p><img src="img3/Grid_Dif.png" width="600" height="auto" alt=""></p></li>
+	<li>Click "Okay". Wait for the process to complete.</li>
+	<li>Click the new "<b>Difference</b>" file at the bottom of the left-hand Manager window.	<p><img src="img3/Select_MOS_3.png" width="300" height="auto" alt=""></p></li>
+	<li>In the Object Properties window, change the <b>Name</b> to "<mark>Vegetation_Height</mark>".</li>
+	<li>Press Enter twice to '<mark>apply</mark>' the change.</li>
+	<li>Scroll down in the Object Properties window, until you get to the <mark>Display</mark> section.</li>
+	<li>Change <b>Shading</b> from "none" to "<mark>traditional</mark>".</li>
+	<li>Set <b>Azimuth</b> to "<mark>315</mark>".</li>
+	<li>Set <b>Height</b> to "<mark>45</mark>".</li>
+	<li>Set <b>Exaggeration</b> to "<mark>5</mark>".</li>
+	<li>Set <b>Minimum</b> to "<mark>0</mark>".</li>
+	<li>Set <b>Maximum</b> to "<mark>1.8</mark>".	<p><img src="img3/Grid_Dif_Shading.png" width="300" height="auto" alt=""></p></li>
+	<li>Scroll to the bottom of the Object Properties window.</li>
+	<li>Set <b>Colors --&gt; Type</b> to "<mark>Graduated Colors</mark>".</li>
+	<li>Under <b>Colors</b> and select the "<mark>...</mark>" button.</li>
+	<li>Click the color button and change it to the 2nd option up from the bottom (<mark>yellow-green-blue</mark>).</li>
+	<li>Click "<mark>Count</mark>" button, and change it to <mark>11</mark>.</li>
+	<li>Click the "<mark>Mirror</mark>" button.	<p><img src="img3/Slope_color.png" width="500" height="auto" alt=""></p></li>
+	<li>Click "<mark>Okay</mark>" to close the Colors window.</li>
+	<li>Set <b>Adjustment</b> to "<mark>Manual</mark>"</li>
+	<li>Set <b>Scaling</b> to "<mark>linear intervals</mark>".	<p><img src="img3/Dif_color_2.png" width="400" height="auto" alt=""></p></li>
+	<li>In the Object Properties window, click "<mark>Apply</mark>" to apply changes.	<p>NOTE: Although we could press the 'Save' button, all it would do is offer to save the current configuration into an external file for reloading. We will use a different function 'Save as Image' to export an image file for our map.</p></li>
+	<li>In the Manager window, right-click the "<b>Vegetation_Height</b>" file and select "<mark>Save as Image</mark>".</li>
+	<li>Label the image "<mark>Vegetation_Height</mark>".</li>
+	<li>Select the base directory of your map (Park folder), and click "<mark>Save</mark>".</li>
+	<li>Check the "<mark>Save Georeference</mark>" box. "Legend" can remain un-checked.</li>
+	<li>Click "<mark>Okay</mark>".	<p><img src="img2/Mos_Image_2.png" width="400" height="auto" alt=""></p></li>
+	<li>You should now have a third image (PNG) file named "Vegetation_Height" and world files (PGW) in your Park folder.	<p><img src="img3/after_Vegetation_Height.jpg" width="420" height="auto" alt="Park folder containing the new Vegetation Height PNG and PGW files"></p></li>
+	</ol></section>
+
+
+	<section id="L27">
+	<header class="section-heading"><h3>2.7 Vegetation Slope Image</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>We will create another image calculated from the slopes in the vegetation height mosaic.</p>
+	<ol>
+	<li>Click the <mark>gear</mark> button.</li>
+	<li>In the "Search for" box type "<mark>slope</mark>" and press "Okay".	<p><img src="img3/SAGA_Slope.png" width="400" height="auto" alt=""></p></li>
+	<li>Select "<mark>Slope, Aspect, Curvature</mark>", and press "OK".	<p><img src="img3/SAGA_Slope_2.png" width="400" height="auto" alt=""></p></li>
+	<li>In the Slope, Aspect, Curvature window, in "<b>Grid System</b>" select the <mark>dimensions</mark> which both mosaics are under. In our example, we've selected "1; 3001x3001y; 502000x 5395000y".</li>
+	<li>Under "<b>&gt; &gt; Elevation</b>", select "<mark>Vegetation_Height</mark>".</li>
+	<li>Under "<b>&lt; &lt; Slope</b>", select "<mark>create</mark>".</li>
+	<li>Click "Okay". Wait for the process to complete.	<p><img src="img3/SAGA_Slope_3.png" width="500" height="auto" alt=""></p></li>
+	<li>Click the new "<b>Slope</b>" file at the bottom of the left-hand Manager window.	<p><img src="img3/Select_MOS_4.png" width="300" height="auto" alt=""></p></li>
+	<li>In the Object Properties window, change the <b>Name</b> to "<mark>Vegetation_Slope</mark>".</li>
+	<li>Press Enter twice to '<mark>apply</mark>' the change.</li>
+	<li>Scroll to the bottom of the Object Properties window.</li>
+	<li>Set <b>Colors --&gt; Type</b> to "<mark>Graduated Colors</mark>".</li>
+	<li>Under <b>Colors</b> and select the "<mark>...</mark>" button.</li>
+	<li>Click the color button and change it to the 2nd option up from the bottom (<mark>yellow-green-blue</mark>).</li>
+	<li>Click "<mark>Count</mark>" button, and change it to <mark>11</mark>.</li>
+	<li>Click the "<mark>Mirror</mark>" button.	<p><img src="img3/Slope_color.png" width="500" height="auto" alt=""></p></li>
+	<li>Click "<mark>Okay</mark>" to close the Colors window.</li>
+	<li>Scroll to the bottom of the Object Properties window.</li>
+	<li>Change <b>Adjustment</b> from "none" to "<mark>Standard Deviation</mark>".</li>
+	<li>Set <b>Standard Deviation</b> to "<mark>2</mark>".</li>
+	<li>Set <b>Keep in Range</b> to "<mark>enabled</mark>".</li>
+	<li>Set <b>Scaling</b> to "<mark>increasing geometric intervals</mark>".</li>
+	<li>Set <b>Geometric Intervals</b> to "<mark>50</mark>".	<p><img src="img3/Slope_color_2.png" width="400" height="auto" alt=""></p></li>
+	<li>Click "<mark>Apply</mark>".	<p>NOTE: Although we could press the 'Save' button, all it would do is offer to save the current configuration into an external file for reloading. We will use a different function 'Save as Image' to export an image file for our map.</p></li>
+	<li>In the Manager window, right-click the "<b>Vegetation_Slope</b>" file and select "<mark>Save as Image</mark>".</li>
+	<li>Label the image "<mark>Vegetation_Slope</mark>".</li>
+	<li>Select the base directory of your map (Park folder), and click "<mark>Save</mark>".</li>
+	<li>Check the "<mark>Save Georeference</mark>" box. "Legend" can remain un-checked.</li>
+	<li>Click "<mark>Okay</mark>".	<p><img src="img2/Mos_Image_2.png" width="400" height="auto" alt=""></p></li>
+	<li>You should now have a fourth image (PNG) file named "Vegetation_Slope" and world files (PGW) in your Park folder.	<p><img src="img3/after_Vegetation_Slope.jpg" width="400" height="auto" alt="Park folder containing the Vegetation Height and Vegetation Slope outputs"></p></li>
+	</ol></section>
+
+	<section id="L28">
+	<header class="section-heading"><h3>2.8 Raw 0.5m Shapefile</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>We will now create a shape file containing raw (not simplified) contours for the area at 0.5m interval. The shape file we produce will not be directly imported into Open Orienteering mapper, but rather used to create a micro-contour template-image, because being able to view micro contours is really useful when mapping. In this step we will only create the intermediary shape file containing the contours.</p>
+	<ol>
+	<li>Click the <mark>gear</mark> button.</li>
+	<li>In the "Search for" box type "<mark>contour</mark>" and press "Okay".	<p><img src="img4/contour.png" width="300" height="auto" alt=""></p></li>
+	<li>Ensure "<mark>Contour Lines from Grid</mark>" is selected, and press "OK".	<p><img src="img4/contour_2.png" width="300" height="auto" alt=""></p></li>
+	<li>In the Contour Lines from Grid window, in "<b>Grid System</b>" select the <mark>dimensions</mark> which the earlier mosaics are under. In our example, we've selected "1; 3001x3001y; 502000x 5395000y".</li>
+	<li>Under "<b>&gt; &gt; Grid</b>", select "<mark>Altitude</mark>".</li>
+	<li>Under "<b>&lt; &lt; Contour</b>", select "<mark>create</mark>".	<p>NOTE: Here the SAGA program will automatically select the 'Base Contour Value' and the 'Maximum Contour Value' for us. The values shown in the screenshot below only apply to my example area.</p></li>
+	<li>Under "<b>Contour Interval</b>", select "<mark>0.5</mark>".	<p><img src="img4/contour_3.png" width="500" height="auto" alt=""></p></li>
+	<li>Click "<mark>Okay</mark>".</li>
+	<li>Your computer may take a while to complete this task. My computer took 100 seconds to complete it for the example area, but for a larger area it took the same computer over 30 minutes to finish the process.	<p>NOTE: Although we could press the 'Save' button, all it would do is offer to save the current configuration into an external file for reloading. We will use a different function 'Save as...' to export an ESRI Shape File for our map.</p></li>
+	<li>In the Manager window, scroll to the bottom and right-click on the new Shape file "<b>Altitude [Interval 0.5]</b>" file and select "<mark>Save as...</mark>".</li>
+	<li>Label the output file "<mark>Contours_0.5m_Raw.shp</mark>".</li>
+	<li>Select the base directory of your map (Park folder), and click "<mark>Save</mark>".</li>
+	<li>You should now have six additional files saved to your Park folder.	<p><img src="img4/after_Contours_05raw.png" width="400" height="auto" alt=""></p></li>
+	</ol></section>
+
+
+	<section id="L29">
+	<header class="section-heading"><h3>2.9 Smooth 2.5m Shapefile</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>We will now run a simplify function twice to smooth elevation data, then use that data to create smoothed (simplified) contour lines for the map at 0.5m interval.</p>
+	<ol>
+	<li>Click the <mark>gear</mark> button.</li>
+	<li>In the "Search for" box type "<mark>simple</mark>" and press "Okay".	<p><img src="img4/simple.png" width="400" height="auto" alt=""></p></li>
+	<li>Ensure "<mark>[grid_filter] Simple Filter</mark>" is selected, and press "OK".	<p><img src="img4/simple_2.png" width="400" height="auto" alt=""></p></li>
+	<li>In the Simple Filter window, in "<b>Grid System</b>" select the <mark>dimensions</mark> which the earlier mosaics are under. In our exaple, we've selected "1; 3001x3001y; 502000x 5395000y".</li>
+	<li>Under "<b>&gt; &gt; Grid</b>", select "<mark>Altitude</mark>".	<p>NOTE: There are two "Simple Filter" functions. If you accidentally ran the wrong function, named "[grids_tools] Simple Filter", it will not offer any options here because it is looking for a 'Grid Collection' instead of a 'Grid'. If this is the case, close the function and run the correct function, "[grid_filter] Simple Filter".</p></li>
+	<li>Under "<b>&lt; Filtered Grid</b>", select "<mark>create</mark>".</li>
+	<li>Under "<b>Radius</b>", select "<mark>5</mark>".	<p>NOTE: For less hilly areas, try 10 here instead of 5.</p>
+	<p><img src="img4/simple_3.png" width="400" height="auto" alt=""></p></li>
+	<li>Click "<mark>Okay</mark>". Wait for the process to complete.</li>
+	<li>Click the new "<b>Altitude [Smoothed]</b>" file at the bottom of the 'Grids' files in the left-hand Manager window.</li>
+	<li>In the Object Properties window, change the <b>Name</b> to "<mark>Altitude_Smoothed_5m</mark>" (or whichever radius value you used for the first time).</li>
+	<li>Press Enter twice to '<mark>apply</mark>' the change.	<p>NOTE: In steps 11-20 we will repeat some of the above steps to create a second simplified image, based off the first simplified image. If you experiment and find that doing it a second time does not help, please skip to <a href="#L29_2">step 24</a> and proceed with only one file.</p></li>
+	<li>Click the <mark>gear</mark> button.</li>
+	<li>In the "Search for" box type "<mark>simple</mark>" and press "Okay".</li>
+	<li>Again, select "<mark>[grid_filter] Simple Filter</mark>", and press "OK".</li>
+	<li>In the Simple Filter window, in "<b>Grid System</b>" select the <mark>dimensions</mark> which the earlier mosaics are under. In our exaple, we've selected "1; 3001x3001y; 502000x 5395000y".</li>
+	<li>Under "<b>&gt; &gt; Grid</b>", select the previously created smoothed file. In our case it was called "<mark>Altitude_Smoothed_5m</mark>".	<p>NOTE: If it won't let you select anything for Grid, you may have run the wrong 'Simple Filter' function. Close the function and re-run the "[grid_filter] Simple Filter" function (step 14).</p></li>
+	<li>Under "<b>&lt; Filtered Grid</b>", select "<mark>create</mark>".</li>
+	<li>Under "<b>Radius</b>", select "<mark>1</mark>" or "<mark>2</mark>".	<p><img src="img4/simple_4.png" width="400" height="auto" alt=""></p></li>
+	<li>Click "<mark>Okay</mark>". Wait for the process to complete.</li>
+	<li>Click the new "<b>Altitude_Smoothed_5m [Smoothed]</b>" file at the bottom of the 'Grids' files in the left-hand Manager window.</li>
+	<li>In the Object Properties window, change the <b>Name</b> to "<mark>Altitude_Smoothed_5m_2m</mark>", to indicate the smoothing was first to 5m, and then to 2m (or whichever radius value you used for the second time).</li>
+	<li>Press Enter twice to '<mark>apply</mark>' the change.	<p>NOTE: We will not be saving either of these files to image files, but instead use them to create contour shape files. The purpose of smoothing the file twice at different levels is to reduce contour line jagginess. You may try experimenting with different values instead of 5-2 to see which values offer the best balance between accuracy and smoothness for your map.</p></li>
+	<li>We should now have two smoothed grid files at the bottom of the 'Grid' section of the left-hand Manager window.	<p id="L29_2"><img src="img4/simple_5.png" width="300" height="auto" alt=""></p></li>
+	<li>Click the <mark>gear</mark> button.</li>
+	<li>In the "Search for" box type "<mark>contour</mark>" and press "Okay".	<p><img src="img4/contour.png" width="300" height="auto" alt=""></p></li>
+	<li>Ensure "<mark>Contour Lines from Grid</mark>" is selected, and press "OK".	<p><img src="img4/contour_2.png" width="300" height="auto" alt=""></p></li>
+	<li>In the Contour Lines from Grid window, in "<b>Grid System</b>" select the <mark>dimensions</mark> which the earlier mosaics are under. In our example, we've selected "1; 3001x3001y; 502000x 5395000y".</li>
+	<li>Under "<b>&gt; &gt; Grid</b>", select "<mark>Altitude_Smoothed_5m_2m</mark>", or whatever you named it in step 20.</li>
+	<li>Under "<b>&lt; &lt; Contour</b>", select "<mark>create</mark>".	<p>NOTE: Here the SAGA program will automatically select the 'Base Contour Value' and the 'Maximum Contour Value' for us. The values shown in the screenshot below only apply to my example area.</p></li>
+	<li>Under "<b>Contour Interval</b>", enter "<mark>2.5</mark>" or whichever contour interval you want on your map.	<p>NOTE: If you're using a value other than 2.5m, it may help to experiment with different radius values in the simple filter functions earlier in this section to see if they work better for your map.</p>
+	<p><img src="img4/simple_6.png" width="500" height="auto" alt=""></p></li>
+	<li>Click "<mark>Okay</mark>".</li>
+	<li>Wait a short while before the computer finishes this task. My computer took under 30 seconds.	<p>NOTE: Although we could press the 'Save' button, all it would do is offer to save the current configuration into an external file for reloading. We will use a different function 'Save as...' to export an ESRI Shape File for our map.</p></li>
+	<li>In the Manager window, scroll to the bottom and right-click on the new Shape file "<b>Altitude_Smoothed_5m_2m [Interval 2.5]</b>" file and select "<mark>Save as...</mark>".</li>
+	<li>Label the output file "<mark>Contours_2.5m_Smooth.shp</mark>".</li>
+	<li>Select the base directory of your map (Park folder), and click "<mark>Save</mark>".</li>
+	<li>You should now have six additional files saved to your Park folder.	<p><img src="img4/after_Contours_25smooth.png" width="700" height="auto" alt=""></p></li>
+	</ol></section>
+
+
+
+	<section id="L210">
+	<header class="section-heading"><h3>2.10 Blue & Black Slope Images</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<ol>
+	<li>Click the <mark>gear</mark> button.</li>
+	<li>In the "Search for" box type "<mark>curv</mark>" and press "Okay".	<p><img src="img4/Slope_Shade.png" width="300" height="auto" alt=""></p></li>
+	<li>Ensure "<mark>Slope, Aspect, Curvature</mark>" is selected, and press "OK".	<p><img src="img4/Slope_Shade_2.png" width="400" height="auto" alt=""></p></li>
+	<li>In the Simple Filter window, in "<b>Grid System</b>" select the <mark>dimensions</mark> which the earlier mosaics are under. In our exaple, we've selected "1; 3001x3001y; 502000x 5395000y".</li>
+	<li>Under "<b>&gt; &gt; Elevation</b>", select "<mark>Altitude</mark>".</li>
+	<li>Under "<b>&lt; &lt; Slope</b>", select "<mark>create</mark>".	<p><img src="img4/Slope_Shade_3.png" width="500" height="auto" alt=""></p>		</li>
+	<li>Click "<mark>Okay</mark>". Wait for the process to complete.</li>
+	<li>Click the new "<b>Slope</b>" file at the bottom of the 'Grids' files in the left-hand Manager window.</li>
+	<li>Scroll down in the Object Properties window, until you get to the <mark>Display</mark> section.</li>
+	<li>Change <b>Shading</b> from "none" to "<mark>traditional</mark>".</li>
+	<li>Set <b>Exaggeration</b> to "<mark>150</mark>".	<p><img src="img4/Slope_Shade_4.png" width="300" height="auto" alt=""></p></li>
+	<li>Scroll to the bottom of the Object Properties window.</li>
+	<li>Set <b>Colors --&gt; Type</b> to "<mark> RGB Compsite</mark>".	<p>NOTE: It will automatically populate the values in the Range box; no changes required.</p>
+	<p><img src="img4/Slope_Shade_5.png" width="300" height="auto" alt=""></p></li>
+	<li>Click "<mark>Apply</mark>".	<p>NOTE: Although we could press the 'Save' button, all it would do is offer to save the current configuration into an external file for reloading. We will use a different function 'Save as Image' to export an image file for our map. </p></li>
+	<li>In the Manager window, right-click the "<b>Slope_Blue</b>" file and select "<mark>Save as Image</mark>".</li>
+	<li>Label the image "<mark>Slope_Blue</mark>".</li>
+	<li>Select the base directory of your map (Park folder), and click "<mark>Save</mark>".</li>
+	<li>Check the "<mark>Save Georeference</mark>" box. "Legend" can remain un-checked.</li>
+	<li>Click "<mark>Okay</mark>".</li>
+	<li>Go to the bottom of the Object Properties window, to the <mark>Display</mark> section.</li>
+	<li>Change Colors --&gt; <b>Type</b> from "RGB Composite" to "<mark>Shade</mark>".</li>
+	<li>Change Adjustment --&gt; <b>Standard Deviation</b> to "<mark>5</mark>".	<p>NOTE: It will automatically populate the values in the Range box to reflect the change; no adjustments are required to these numbers.</p></li>
+	<li>Change <b>Scaling</b> to "<mark>increasing geometrical intervals</mark>".	<p><img src="img4/Slope_Shade_6.png" width="300" height="auto" alt=""></p></li>
+	<li>Click "<mark>Apply</mark>".	<p>NOTE: Although we could press the 'Save' button, all it would do is offer to save the current configuration into an external file for reloading. We will use a different function 'Save as Image' to export an image file for our map. </p></li>
+	<li>In the Manager window, right-click the "<b>Slope_Gray</b>" file and select "<mark>Save as Image</mark>".</li>
+	<li>Label the image "<mark>Slope_Gray</mark>".</li>
+	<li>Select the base directory of your map (Park folder), and click "<mark>Save</mark>".</li>
+	<li>Check the "<mark>Save Georeference</mark>" box. "Legend" can remain un-checked.</li>
+	<li>Click "<mark>Okay</mark>".</li>
+	<li>You should now have slope images (PNG) named "Slope_Blue" and "Slope_Gray" and corresponding world files (PGW) in your Park folder.	<p><img src="img4/after_Slope_Shade.jpg" width="400" height="auto" alt="Blue and grayscale slope previews beside their world files in the Park folder"></p></li>
+	</ol></section>
+
+
+
+
+	<section id="L211">
+	<header class="section-heading"><h3>2.11 Blue Hill-Shading Images</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>For this step we will use the original 'Altitude' mosaic from earlier in this tutorial to create some blue hill-shading images.</p>
+	<ol>
+	<li>Select the Altitude file in the Manager window.</li>
+	<li>In the Object Properties window, scroll down to the 'Colors' section. It should show green-yellow-brown and 15 colors from the original 'Altitude' image. This setting means that the final product should turn 'blue', which is what we want. If your colors are not adjusted properly, return to <a href="#L24_2">this step</a> and fix them before proceeding, or the end result will not be blue but other colors.</li>
+	<li>Scroll up to "<b>Shading</b>", and change it from "none" to "<mark>Traditional</mark>".</li>
+	<li>Set <b>Azimuth</b> to "<mark>315</mark>".	<p>NOTE: Azimuth is the direction of the imaginary light source/sun, NW in this case. The image we create will best highlight features running perpendicular to this angle.</p></li>
+	<li>Set <b>Height</b> to "<mark>45</mark>".	<p>NOTE: Height is the virtual sun’s altitude. It may be worth experimenting with altering the “Max” value a little.</p></li>
+	<li>Set <b>Exaggeration</b> to "<mark>50</mark>".	<p>NOTE: Exaggeration values between 50 and 150 work best. It’s a balance between under-shading small features such as ditches and earthbanks and over-shading hillsides. Higher values work better in flatter areas.</p>	</li>
+	<li>Set <b>Minimum</b> to "<mark>0</mark>".</li>
+	<li>Set <b>Maximum</b> to "<mark>1.5</mark>".	<p><img src="img5/Hill_Shading.png" width="300" height="auto" alt=""></p></li>
+	<li>Scroll down to "Colors" and change "<b>Type</b>" to "<mark>RGB Composite</mark>".	<p><img src="img5/Hill_Shading_2.png" width="300" height="auto" alt=""></p>
+	<p>NOTE: Although we could press the 'Save' button, all it would do is offer to save the current configuration into an external file for reloading. We will use a different function 'Save as Image' to export an image file for our map. </p></li>
+	<li>In the Manager window, right-click the "<b>Altitude</b>" file and select "<mark>Save as Image</mark>".</li>
+	<li>Label the image "<mark>Hill_Shading_315</mark>" (for the azimuth setting in the Shading option).</li>
+	<li>Select the base directory of your map (Park folder), and click "<mark>Save</mark>".</li>
+	<li>Check the "<mark>Save Georeference</mark>" box. "Legend" can remain un-checked.</li>
+	<li>Click "<mark>Okay</mark>" to save the image</li>
+	<li>Change the Object Properties --&gt; Shading --&gt; "<b>Azimuth</b>" to "<mark>45</mark>".</li>
+	<li>Press Enter twice to '<mark>apply</mark>' the change.</li>
+	<li>In the Manager window, right-click the "<b>Altitude</b>" file and select "<mark>Save as Image</mark>".</li>
+	<li>Label the image "<mark>Hill_Shading_045</mark>", and click "Okay" to save the image.</li>
+	<li>Repeat <b>the last three steps for Azimuths</b> "135" and "225", saving the files as "<mark>Hill_Shading_135.png</mark>" and "<mark>Hill_Shading_225.png</mark>" respectively.</li>
+	<li>You should now have four new image (PNG) files named "Hill_Shading_XXX" with world files (PGW) in your Park folder.	<p><img src="img5/Hill_Shading_3.jpg" width="600" height="auto" alt="Four turquoise hill-shading previews with their corresponding world files"></p></li>
+	</ol></section>
+
+	<section id="L212">
+	<header class="section-heading"><h3>2.12 Further SAGA Processing</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>We are done with SAGA. Close the SAGA program. If you choose to save the file, save it to the geodata folder.</p>
+	<p>Although additional steps could be taken if we had access to additional types of LIDAR data, this guide does not explain how to:</p>
+	<ul>
+	<li><b>Process intermediate-return (point cloud) LIDAR</b> into different classifications of undergrowth (i.e., thick vegetation vs light vegetation).</li>
+	<li><b>Process intensity</b> of first return for indication of type of object (i.e., tree vs building).</li>
+	</ul>
+	<p>For further explanation on the above topics, read "Chapter 6 Obtaining a LiDAR undergrowth template using LAStools and SAGA-GIS" at this <a href="https://www.britishorienteering.org.uk/document/e7823ecc894e5b1a55b716b381d35b12.pdf/Creating%20Base%20Map%20Templates%20in%20OOM%20from%20LiDAR%20and%20other%20Sources.v2.pdf" target="_blank" rel="noopener noreferrer">link</a>. You may also need to obtain additional LIDAR point cloud data with intermediate returns (not just first or lasts returns). These files may not be free yet, like the open data we have already accessed. Additionally, you may need to use other programs to help process it (LASTools, or Karttapullautin).</p>
+	<p>If you are able to download comprehensive LIDAR point cloud data with intermediate returns, it is super useful. As an example, you could create an image that shows how dense the vegetation is, across the entire mapped area. The downside of this sort of data, is that it may be out of season, or a few years old, and it depends upon when they conducted the last aerial survey. Below is an example of one such final product, this one was processed using Karttapullautin program, and shows different levels of undergrowth as an orienteeing map does. Such data allows the mapper to characterize the vegetation and undergrowth easily and automatically, without having to conduct extensive field mapping, or at least provides us with a great starting point for later field-checking. Imagine how cool this image would look once we load our contour lines, and open street map data!</p>
+	<p><img src="img5/undergrowth_example.jpg" width="500" height="auto" alt="Processed undergrowth map showing denser vegetation in darker green and open areas in white"></p>
+	</section>
+
+
+	<section id="L213">
+	<header class="section-heading"><h3>2.13 Orthophotography</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p><b>OPTIONAL STEP</b></p>
+	<p>Because of the way it’s surveyed, LIDAR data is usually more accurately geo-referenced than standard aerial photography.</p>
+	<p>That being said, sometimes aerial photography is invaluable when trying to draw features on your map that only exist or were observed in aerial photography. Orthophotography is special photography usable in mapping programs like OpenOrienteering Mapper, which has been adjusted to fit to normalized geo-projections.</p>
+	<p>If you have enough disk space and/or haven't used orthophotography before, you should download orthophotography that corresponds to the area you intend to map and see if it helps. A word of caution though, they are large files! It may make more sense, and save memory, to download them only when you're ready to use them, and delete them afterwards. For the sake of demonstration, we will download the files here.</p>
+	<ol>
+	<li>Go to the Open GeoData portal and scroll down to 'Digitales Orthophoto', select the area you want, and download it.</li>
+	<li>Once you extract all the folders, search for TIF and TGW files (may need to do in two separate steps).</li>
+	<li>Move all the TIF (image file) along with the TGW (world file) to a separate 'Park/Orthophotography' folder for later loading into the map (as image/template).	<p>NOTE: I recommend placing the orthophotography files into their own sub-folder, so we don't accidentally copy them to our mobile device later when we prepare to conduct field mapping. I haven't found them all that useful when field-mapping, but your experiences may differ.</p></li>
+	<li>When you are ready to use them, visit <a href="chapter-3.html#L38">this section</a> to load them in OpenOrienteering mapper.</li>
+	</ol></section>
+
+
+
+	<section id="L214">
+	<header class="section-heading"><h3>2.14 Micro-Contour Template</h3><a class="rfBtn" href="index.html#TOC0" aria-label="Return to table of contents"><img src="img1/returnToMenu.png" width="32" height="32" alt=""></a></header>
+	<p>We will now create an OpenOrienteering template using the 0.5m raw contours. If you have not yet downloaded OpenOrienteering Mapper yet, head to the link <a href="chapter-1.html#L1">above</a>, download it, and install it on your computer.</p>
+	<ol>
+	<li>Run OpenOrienteering Mapper.</li>
+	<li>Click "<mark>Create a new map</mark>".</li>
+	<li>Select "<mark>ISOM 2017-2_10000</mark>".	<p><img src="img5/raw_cont_01.png" width="300" height="auto" alt=""></p></li>
+	<li>Click "<mark>Create</mark>".	<p>NOTE: The left-hand side of OpenOrienteering Mapper allows you to edit your map (it is grayed out until we add data). The right-hand side shows the "Symbol" window for adding objects to your map. Along the top is a toolbar that lets you select what action you want to do, adding, editing, rotating, cropping, etc. For additional help consult the online <a href="https://www.openorienteering.org/mapper-manual/pages/"  target="_blank" rel="noopener noreferrer">documentation</a> page.</p>
+	<p>NOTE: In OpenOrienteering Mapper, there are two different ways to load intermediate data files: (1) loading an image file for viewing/comparing with the map, and (2) importing a (certain type of) file allowing you to edit the symbols as you would an orienteering map. For this step we will 'import' the 0.5m raw contour shape file. More on this important distinction later.</p></li>
+	<li>Click "File --&gt; <mark>Import</mark>".</li>
+	<li>Select the "<mark>Contours_0.5m_Raw.shp</mark>" file in your Park folder.	<p><img src="img5/raw_cont_02.png" width="500" height="auto" alt=""></p></li>
+	<li>Click "Open". Wait for it to finish loading the file.</li>
+	<li>On the "Map Georeferencing" window, under "<b>Coordinate reference system</b>", select "<mark>UTM</mark>".</li>
+	<li>Check that the "<b>Status</b>" indicates "<b>Valid</b>". If there is an error with the coordinate reference system, you may need to re-process the LIDAR correctly.	<p><img src="img5/raw_cont_03.png" width="500" height="auto" alt=""></p></li>
+	<li>Click "OK". Wait for it to finish thinking.	<p><img src="img5/raw_cont_04.png" width="300" height="auto" alt=""></p></li>
+	<li>On the "Assign new symbols" window, under the "<b>2 Line</b>", leave it reading "<mark>- none -</mark>", and click "OK".	<p><img src="img5/raw_cont_05.png" width="300" height="auto" alt=""></p></li>
+	<li>You should now see before you a bunch of purple contour lines. At the bottom of the symbol window, double-click on the purple <b>2 Line</b> symbol.	<p><img src="img5/raw_cont_06.jpg" width="400" height="auto" alt="Imported purple micro-contours displayed beside the 2 Line symbol in OpenOrienteering Mapper"></p></li>
+	<li>In the "Symbol settings" window, under the "<b>Line settings</b> tab, change the "<b>Line width</b> from "0.10 mm" to "<mark>0.01 mm</mark>".	<p><img src="img5/raw_cont_07.png" width="500" height="auto" alt=""></p></li>
+	<li>Click "OK".</li>
+	<li>The purple lines may appear to have disappeared, but they're still there. They're just very small, you have to zoom in to see them.</li>
+	<li>Select File --&gt; "<mark>Save</mark>".</li>
+	<li>Navigate to your Park folder save the file as "Contours_0.5m_Raw.omap"	<p><img src="img5/raw_cont_08.png" width="500" height="auto" alt=""></p></li>
+	<li>Close the OpenOrienteering Mapper window by clicking the X at the top right of the window.</li>
+	<li>You should now have an OpenOrienteering Mapper file in your Park folder called "Contours_0.5m_Raw.omap".	<p><img src="img5/raw_cont_09.png" width="400" height="auto" alt=""></p></li>
+	</ol></section>
+		<nav class="chapter-navigation" aria-label="Chapter navigation"><a href="chapter-1.html">Previous chapter</a>
+			<a href="index.html#TOC0">Master table of contents</a>
+			<a href="chapter-3.html">Next chapter</a></nav>
+	</main>
+<script src="site.js"></script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>
